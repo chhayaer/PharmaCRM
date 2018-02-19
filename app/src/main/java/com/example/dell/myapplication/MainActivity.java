@@ -1,114 +1,45 @@
 package com.example.dell.myapplication;
 
-import android.support.v7.app.AppCompatActivity;
+import java.util.List;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.content.Intent;
-import android.view.View.OnClickListener ;
-import android.database.Cursor;
+import android.view.Menu;
 
+public class MainActivity extends Activity {
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-
-public class MainActivity extends AppCompatActivity {
-    EditText Name, Pass , updateold, updatenew, delete;
-    myDbAdapter helper;
-    Button b1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Name= (EditText) findViewById(R.id.editName);
-        Pass= (EditText) findViewById(R.id.editPass);
-        updateold= (EditText) findViewById(R.id.editText3);
-        updatenew= (EditText) findViewById(R.id.editText5);
-        delete = (EditText) findViewById(R.id.editText6);
-        b1 = (Button)findViewById(R.id.button2);
 
-        helper = new myDbAdapter(this);
-    }
-    public void addUser(View view)
-    {
-        String t1 = Name.getText().toString();
-        String t2 = Pass.getText().toString();
-        if(t1.isEmpty() || t2.isEmpty())
-        {
-            Message.message(getApplicationContext(),"Enter Both Name and Password");
-        }
-        else
-        {
-            long id = helper.insertData(t1,t2);
-            if(id<=0)
-            {
-                Message.message(getApplicationContext(),"Insertion Unsuccessful");
-                Name.setText("");
-                Pass.setText("");
-            } else
-            {
-                Message.message(getApplicationContext(),"Insertion Successful");
-                Name.setText("");
-                Pass.setText("");
-            }
+        DatabaseHandler db = new DatabaseHandler(this);
+
+        // Inserting Contacts
+        Log.d("Insert: ", "Inserting ..");
+        db.addContact(new Contact("Ravi", "9100000000"));
+        db.addContact(new Contact("Srinivas", "9199999999"));
+        db.addContact(new Contact("Tommy", "9522222222"));
+        db.addContact(new Contact("Karthik", "9533333333"));
+
+        // Reading all contacts
+        Log.d("Reading: ", "Reading all contacts..");
+        List<Contact> contacts = db.getAllContacts();
+
+        for (Contact cn : contacts) {
+            String log = "Id: "+cn.getID()+" ,Name: " + cn.getName() + " ,Phone: " +
+                    cn.getPhoneNumber();
+            // Writing Contacts to log
+            Log.d("Name: ", log);
         }
     }
 
-
-
-    public void viewdata(View view)
-    {
-        String data = helper.getData();
-        Message.message(this,data);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+       // getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
     }
 
-    public void update( View view)
-    {
-        String u1 = updateold.getText().toString();
-        String u2 = updatenew.getText().toString();
-        if(u1.isEmpty() || u2.isEmpty())
-        {
-            Message.message(getApplicationContext(),"Enter Data");
-        }
-        else
-        {
-            int a= helper.updateName( u1, u2);
-            if(a<=0)
-            {
-                Message.message(getApplicationContext(),"Unsuccessful");
-                updateold.setText("");
-                updatenew.setText("");
-            } else {
-                Message.message(getApplicationContext(),"Updated");
-                updateold.setText("");
-                updatenew.setText("");
-            }
-        }
-
-    }
-    public void delete( View view)
-    {
-        String uname = delete.getText().toString();
-        if(uname.isEmpty())
-        {
-            Message.message(getApplicationContext(),"Enter Data");
-        }
-        else{
-            int a= helper.delete(uname);
-            if(a<=0)
-            {
-                Message.message(getApplicationContext(),"Unsuccessful");
-                delete.setText("");
-            }
-            else
-            {
-                Message.message(this, "DELETED");
-                delete.setText("");
-            }
-        }
-    }
 }
